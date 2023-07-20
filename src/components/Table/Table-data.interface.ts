@@ -1,14 +1,14 @@
-interface Route {
-  key: number;
-  name: string;
-  route: string;
-  points: Points;
-}
-
 interface Points {
   [key: string]: number[];
 }
 
-export interface TableData {
+interface Route {
+  key: number;
+  name: string;
+  route: string;
+  points: Points[];
+}
+
+export interface RoutesData {
   [key: string]: Route[];
 }

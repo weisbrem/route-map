@@ -5,9 +5,17 @@ import Table from '../Table/Table';
 import RouteMap from '../RouteMap/RouteMap';
 
 import styles from './App.module.css';
+import { useAppDispatch } from '../../hooks';
+import { useEffect } from 'react';
 
 const { Header, Footer, Content } = Layout;
 function App() {
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch({ type: 'route/getAllRoutes' });
+  }, []);
+
   return (
     <Layout className={styles['main-layout']}>
       <Header className={styles['header']}>Header</Header>
