@@ -3,6 +3,10 @@ import { AlignType } from 'rc-table/lib/interface';
 
 const contentPosition: AlignType = 'center';
 
+/**
+ * получить точки из db и заполнить массив dataSource
+ */
+
 const dataSource = [
   {
     key: 1,
@@ -36,28 +40,24 @@ const columns = [
     dataIndex: 'route',
     key: 'route',
     align: contentPosition,
-    width: 150,
   },
   {
     title: 'Точка 1 (lat, lng)',
     dataIndex: 'point-1',
     key: 'point-1',
     align: contentPosition,
-    width: 150,
   },
   {
     title: 'Точка 2 (lat, lng)',
     dataIndex: 'point-2',
     key: 'point-2',
     align: contentPosition,
-    width: 150,
   },
   {
     title: 'Точка 3 (lat, lng)',
     dataIndex: 'point-3',
     key: 'point-3',
     align: contentPosition,
-    width: 150,
   },
 ];
 
