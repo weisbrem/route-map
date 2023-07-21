@@ -2,13 +2,13 @@ interface Points {
   [key: string]: number[];
 }
 
-interface Route {
+export interface Route {
   key: number;
   name: string;
-  route: string;
+  routeName: string;
   points: Points[];
 }
 
 export interface RoutesData {
-  [key: string]: Route[];
+  [key: string]: Route;
 }
