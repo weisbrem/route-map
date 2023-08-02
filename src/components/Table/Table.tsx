@@ -1,68 +1,98 @@
 import ForwardTable from 'antd/es/table/Table';
+import { useAppDispatch, useAppSelector } from '../../hooks';
+
+import { renderData } from '../../helpers';
+
 import { AlignType } from 'rc-table/lib/interface';
+import {
+  setSelectMapCoordinates,
+  setSelectRouteCoordinates,
+} from '../../store/polyline-slice/polyline-slice';
 
 const contentPosition: AlignType = 'center';
-
-const dataSource = [
-  {
-    key: 1,
-    name: 'route 1',
-    route: 'Маршрут №1',
-    ['point-1']: ['59.84660399, ', '30.29496392'],
-    ['point-2']: ['59.82934196, ', '30.42423701'],
-    ['point-3']: ['59.83567701, ', '30.38064206'],
-  },
-  {
-    key: 2,
-    name: 'Маршрут 2',
-    route: 'Маршрут №2',
-    ['point-1']: ['59.82934196, ', '30.42423701'],
-    ['point-2']: ['59.82761295, ', '30.41705607'],
-    ['point-3']: ['59.84660399, ', '30.41705607'],
-  },
-  {
-    key: 3,
-    name: 'Маршрут 3',
-    route: 'Маршрут №3',
-    ['point-1']: ['59.83567701, ', '30.38064206'],
-    ['point-2']: ['59.84660399, ', '30.29496392'],
-    ['point-3']: ['59.82761295, ', '30.41705607'],
-  },
-];
 
 const columns = [
   {
     title: 'Маршрут',
-    dataIndex: 'route',
-    key: 'route',
+    dataIndex: 'routeName',
+    key: 'routeName',
     align: contentPosition,
-    width: 150,
   },
   {
     title: 'Точка 1 (lat, lng)',
     dataIndex: 'point-1',
     key: 'point-1',
     align: contentPosition,
-    width: 150,
+    render: renderData,
   },
   {
     title: 'Точка 2 (lat, lng)',
     dataIndex: 'point-2',
     key: 'point-2',
     align: contentPosition,
-    width: 150,
+    render: renderData,
   },
   {
     title: 'Точка 3 (lat, lng)',
     dataIndex: 'point-3',
     key: 'point-3',
     align: contentPosition,
-    width: 150,
+    render: renderData,
   },
 ];
 
 function Table() {
-  return <ForwardTable columns={columns} dataSource={dataSource} pagination={false}></ForwardTable>;
+  const routes = useAppSelector((state) => state.routes.routes);
+  const dispatch = useAppDispatch();
+
+  if (!routes) {
+    return null;
+  }
+
+  const dataSource = Object.entries(routes).map(([name, route]) => {
+    const { key, routeName, points } = route;
+
+    return {
+      key,
+      name,
+      routeName,
+      ...points,
+    };
+  });
+
+  return (
+    <ForwardTable
+      columns={columns}
+      dataSource={dataSource}
+      pagination={false}
+      rowSelection={{
+        type: 'radio',
+        onChange: (_key, row) => {
+          const formatedData = Object.entries(row[0]).filter(
+            ([key]) => key.length === key.match(/point-\d/g)?.[0].length
+          );
+
+          const coordinateForMap = formatedData.map(([_name, item]) => item as unknown as number[]);
+          let resultCoordinates = '';
+
+          formatedData.forEach(([key, value], i) => {
+            if (i + 1 === formatedData.length) {
+              resultCoordinates = `${resultCoordinates}${value.toString()}`;
+              return;
+            }
+
+            if (key.includes(`point-${i + 1}`)) {
+              resultCoordinates = `${resultCoordinates}${value.toString()};`;
+            }
+          });
+
+          dispatch(setSelectRouteCoordinates(resultCoordinates));
+          dispatch(setSelectMapCoordinates(coordinateForMap));
+          dispatch({ type: 'routes/getPolylineRoute' });
+        },
+      }}
+    />
+  );
 }
 
 export default Table;
