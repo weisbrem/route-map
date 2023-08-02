@@ -13,7 +13,7 @@ function App() {
   const dispatch = useAppDispatch();
 
   useEffect(() => {
-    dispatch({ type: 'route/getAllRoutes' });
+    dispatch({ type: 'routes/getAllRoutes' });
   }, []);
 
   return (
